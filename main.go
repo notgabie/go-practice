@@ -6,11 +6,17 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-		// This function is an HTTP handler function. It takes two arguments: an http.ResponseWriter and an http.Request. The http.ResponseWriter is used to write the response back to the client, and the http.Request contains information about the incoming request.
+	// This function is an HTTP handler function. It takes two arguments: an http.ResponseWriter and an http.Request. The http.ResponseWriter is used to write the response back to the client, and the http.Request contains information about the incoming request.
 
 	// The function signature is func(w http.ResponseWriter, r *http.Request). This is a common pattern in Go for defining HTTP handler functions. The asterisk (*) in *http.Request is a pointer type, which means that the function receives a reference to the request object rather than a copy of it.
 
 	// the w and r are just variable names. However, it's a common convention to use w for the response writer and r for the request.
+
+	// Since we want the homepage to only be displayed when the path exactly matches "/", we can check the request URL using r.URL.Path. If the path is not "/", we can return a 404 Not Found response using the http.NotFound function.
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 
 	// []byte is a built-in type that is used to store a sequence of bytes. We use it here to convert a string to a byte slice.
 
@@ -18,12 +24,23 @@ func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, World!"))
 }
 
+func snippetView(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display a snippet..."))
+}
 
+func snippetCreate(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a new snippet..."))
+}
 
 func main() {
 	// Create a new ServeMux which acts as a router in our application. We use the HandleFunc method to register the home function as the handler for the "/" route.
+	// Servemux treats a URL pattern as a prefix match. This means that a pattern "/" matches all paths not matched by other registered patterns. Navigating to http://localhost:/snippet will still match the "/" pattern because it's a prefix of "/snippet/view" and "/" is the closest match. 
 	mux := http.NewServeMux()
+	// This is a subtree path, meaning it matches all requests made to a URL that starts with the specified prefix. You can see that it's a subtree path because it ends with a trailing slash.
 	mux.HandleFunc("/", home)
+	// These are fixed paths, meaning they are only matched when the request URL matches exactly.
+	mux.HandleFunc("/snippet/view", snippetView)
+	mux.HandleFunc("/snippet/create", snippetCreate)
 
 
 	// http.ListenAndServe starts an HTTP server and listens for incoming requests. It takes two arguments: the TCP address to listen on and the ServeMux to use for routing requests.
