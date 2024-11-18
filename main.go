@@ -35,9 +35,8 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 		// WritHeader can only be called once per response. If you call it multiple times, Go will log a warning.
 		// If you don't set a status code explicitly, Go will default to 200 OK.
 		// We can include which request methods are allowed in the response body using .Set("Allow", method) This will show the user which methods are allowed for the requested resource.
-		w.Header().Set("Allow", "POST")
-		w.WriteHeader(405)
-		w.Write([]byte("Method Not Allowed"))
+		w.Header().Set("Allow", http.MethodPost)
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
