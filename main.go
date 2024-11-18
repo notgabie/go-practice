@@ -28,7 +28,19 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a snippet..."))
 }
 
+// This function should only respond to POST requests.
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method !=  "POST" {
+		// The http.ResponseWriter interface has a WriteHeader method that allows us to set the status code of the response. We use it here to set the status code to 405 Method Not Allowed when the request method is not POST.
+		// WritHeader can only be called once per response. If you call it multiple times, Go will log a warning.
+		// If you don't set a status code explicitly, Go will default to 200 OK.
+		// We can include which request methods are allowed in the response body using .Set("Allow", method) This will show the user which methods are allowed for the requested resource.
+		w.Header().Set("Allow", "POST")
+		w.WriteHeader(405)
+		w.Write([]byte("Method Not Allowed"))
+		return
+	}
+
 	w.Write([]byte("Create a new snippet..."))
 }
 
