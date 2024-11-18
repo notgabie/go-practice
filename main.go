@@ -34,7 +34,8 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("Display a snippet..."))
+	// We use the fmt.Fprintf function to interpolate the id value into the response. The %d verb is used to format an integer value. The first argument to fmt.Fprintf is the response writer, and the second argument is the format string. Any additional arguments are used to replace the placeholders in the format string.
+	fmt.Fprintf(w, "Displaying snippet with ID %d...", id)
 }
 
 // This function should only respond to POST requests.
